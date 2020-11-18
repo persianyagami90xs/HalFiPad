@@ -1,4 +1,8 @@
 # HalFiPad
+
+!!!UNOFFICIAL BETA FOR IOS 14!!!
+!!!SOME FEATURES DISABLED!!!
+
 Bring modern gestures and many unique features to your iPhone, but lightweight and less battery drain.<br>
 Add my repo: [cypous.github.io](https://cypous.github.io)
 # Features:

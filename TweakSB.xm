@@ -1,30 +1,5 @@
 #import "TweakCommon.h"
 
-//Enable Gestures
-%hook BSPlatform
-- (NSInteger)homeButtonType {
-    if (gesturesMode == 4 || gesturesMode == 0) return %orig;
-    return 2;
-}
-%end
-
-// Mini Gestures
-%group MiniatureGesture
-static BOOL nopas = YES;
-@interface CSPasscodeViewController
--(void)passcodeLockViewCancelButtonPressed:(id)arg1 ;
-@end
-
-%hook CSPasscodeViewController
--(void)viewDidAppear:(BOOL)arg1 {
-    %orig(NO);
-    if(nopas) {
-        [self passcodeLockViewCancelButtonPressed:nil];
-        nopas = NO;
-    }
-}
-%end
-
 %hook SBControlCenterController
 -(NSUInteger)presentingEdge {
     return 1;
@@ -42,6 +17,18 @@ static BOOL nopas = YES;
     return YES;
 }
 %end
+
+%hook SpringBoard
+-(NSUInteger)homeScreenRotationStyle {
+    return 0;
+}
+%end
+
+%hook SBIconListPageControl
+-(void)setHidden:(bool)arg1 {
+    arg1 = 1;
+    %orig;
+}
 %end
 
 // LockScreen Shortcuts
@@ -140,30 +127,6 @@ static BOOL nopas = YES;
 
 -(NSUInteger)trailingState {
     return 1;
-}
-%end
-%end
-
-// CC Grabber
-%group ccGrabber
-@interface CSTeachableMomentsContainerView : UIView
-@property(retain, nonatomic) UIView *controlCenterGrabberView;
-@property(retain, nonatomic) UIView *controlCenterGrabberEffectContainerView;
-@property (retain, nonatomic) UIImageView * controlCenterGlyphView;
-@end
-
-%hook CSTeachableMomentsContainerView
-- (void)_layoutControlCenterGrabberAndGlyph {
-    %orig;
-    if (statusBarMode == 3) {
-        self.controlCenterGrabberEffectContainerView.frame = CGRectMake(self.frame.size.width - 73,36,46,2.5);
-        self.controlCenterGrabberView.frame = CGRectMake(0,0,46,2.5);
-        self.controlCenterGlyphView.frame = CGRectMake(315,45,16.6,19.3);
-    } else {
-        self.controlCenterGrabberEffectContainerView.frame = CGRectMake(self.frame.size.width - 75.5,24,60.5,2.5);
-        self.controlCenterGrabberView.frame = CGRectMake(0,0,60.5,2.5);
-        self.controlCenterGlyphView.frame = CGRectMake(320,35,16.6,19.3);
-    }
 }
 %end
 %end
@@ -939,8 +902,6 @@ static CGFloat offset = 0;
             }
             if (gesturesMode != 0) {
                 %init(CCStatusBar);
-                if (gesturesMode==4)
-                    %init(MiniatureGesture);
             } else {
                 %init(FixCC134);
                 isiPadMultitask = NO;
@@ -954,7 +915,6 @@ static CGFloat offset = 0;
             if (isNewGridSwitcher) %init(NewGridSwitcher);
             // Global options
             if (isBatteryPercent) %init(BatteryPercentage);
-            if (isCCGrabber) %init(ccGrabber);
             if (!isCCStatusbar) %init(NoCCStatusBar);
             if (isNoBreadcrumb) %init(NoBreadcrumb);
             if (!isiPXCombination) %init(OriginalButtons);

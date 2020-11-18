@@ -130,17 +130,6 @@
 %end
 %end
 
-// Picture in Picture
-%group PictureInPicture
-#define keyy(key) CFEqual(string, CFSTR(key))
-extern "C" Boolean MGGetBoolAnswer(CFStringRef);
-%hookf(Boolean, MGGetBoolAnswer, CFStringRef string) {
-	if (keyy("nVh/gwNpy7Jv1NOk00CMrw"))
-		return YES;
-	return %orig;
-}
-%end
-
 // Camera UI Set
 %group CameraUISet
 %hook CAMCaptureCapabilities
@@ -218,8 +207,6 @@ static bool appID(NSString *keyString) {
                     %init(iPadAppStyle);
                 }
             }
-
-            if (isPIP) %init(PictureInPicture);
 
             // Keyboard Options
             if (isDarkKeyboard)
